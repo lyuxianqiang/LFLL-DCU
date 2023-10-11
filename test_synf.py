@@ -13,7 +13,6 @@ import lpips
 
 import numpy as np
 import scipy.io as scio 
-import scipy.misc as scim
 import matplotlib.pyplot as plt
 from collections import defaultdict
 from os.path import join
@@ -31,7 +30,7 @@ parser.add_argument("--overlap", type=int, default=4, help="The size of croped L
 parser.add_argument("--summaryPath", type=str, default='./', help="Path for saving training log ")
 parser.add_argument("--dataName", type=str, default='Synthetic', help="The name of dataset ")
 parser.add_argument("--modelPath", type=str, default='./model/model_synf_simple.pth', help="Path for loading trained model ")
-parser.add_argument("--dataPath", type=str, default='./input/test_synf.mat', help="Path for test data ")
+parser.add_argument("--dataPath", type=str, default='./input/****.mat', help="Path for test data ")
 parser.add_argument("--savePath", type=str, default='./results/', help="Path for saving results ")
 opt = parser.parse_known_args()[0]
 
@@ -64,8 +63,7 @@ with torch.no_grad():
         LF=sample['lf'] #test lf [b,u,v,x,y,c]
         lowlf=sample['lowlf']
         lowlf = lowlf.cuda()
-        # lfName=sample['lfname']
-        lfName = 'Bottles_dense'
+        lfName=sample['lfname']
         b,u,v,c,x,y = LF.shape   
         print(LF.shape)
         ## Crop the input LF into patches 
@@ -93,12 +91,12 @@ with torch.no_grad():
                 lf_ssim += structural_similarity((estiLF.permute(0,1,2,4,5,3).reshape(b,u*v,xCrop,yCrop,c)[0,ind_uv].cpu().numpy()*255.0).astype(np.uint8), (LF.permute(0,1,2,4,5,3).reshape(b,u*v,xCrop,yCrop,c)[0,ind_uv].cpu().numpy()*255.0).astype(np.uint8),gaussian_weights=True,sigma=1.5,use_sample_covariance=False,multichannel=True) / (u*v)
                 lf_lpips += loss_lpips_alex(estiLF.reshape(b,u*v,c,xCrop,yCrop)[0,ind_uv].cpu(),LF.reshape(b,u*v,c,xCrop,yCrop)[0,ind_uv]) / (u*v)
 
-        avg_psnr += lf_psnr            
-        avg_ssim += lf_ssim
-        avg_lpips += lf_lpips
-        log.info('Index: %d  Scene: %s  PSNR: %.2f  SSIM: %.3f   LPIPS:  %.3F'%(num,lfName,lf_psnr,lf_ssim,lf_lpips))
+        avg_psnr += lf_psnr / len(dataloader)             
+        avg_ssim += lf_ssim / len(dataloader)
+        avg_lpips += lf_lpips / len(dataloader)
+        log.info('Index: %d  Scene: %s  PSNR: %.2f  SSIM: %.3f   LPIPS:  %.3F'%(num,lfName[0],lf_psnr,lf_ssim,lf_lpips))
         #save reconstructed LF
-        scio.savemat(os.path.join(opt.savePath,lfName+'.mat'),{'lf_recons':torch.squeeze(estiLF).cpu().numpy()}) #[u,v,x,y,c]
+        scio.savemat(os.path.join(opt.savePath,lfName[0]+'.mat'),{'lf_recons':torch.squeeze(estiLF).cpu().numpy()}) #[u,v,x,y,c]
 
     [log.info('Average PSNR: %.2f  SSIM: %.3f  LPIPS: %.3f '%(avg_psnr,avg_ssim,avg_lpips))  ]
 
