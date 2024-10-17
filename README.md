@@ -14,7 +14,8 @@ Set the training datapath, and learning rate according to data type. You can als
 
 And run 'python train_synf.py'
 
-When training on the L3F dataset, it is advisable to configure the learning rate to 5e-4 for L3F-20, 1e-4 for L3F-50, and 1e-4 for L3F-100, respectively.
+When training on the L3F dataset, it is advisable to configure the learning rate to 5e-4 for L3F-20, 1e-4 for L3F-50, and 1e-4 for L3F-100, respectively. Or, you can download the modle from the link https://pan.baidu.com/s/13p3O7PXX0aK2Npg0U-SU2g 
+with access code 'zwpy'
 
 For other datasets, we suggest adapting the learning rate selection strategy based on the average brightness level of the dataset. Specifically, a lower learning rate is recommended for datasets with darker overall brightness.
 
