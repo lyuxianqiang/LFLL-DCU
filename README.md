@@ -5,6 +5,10 @@
 You can download the dataset for synthetic LF data from 
 https://drive.google.com/drive/folders/17_4TAdo3AN6qwZLosYCOFUd30evMDDwz?usp=sharing
 
+The original link of L3F dataset seems invalid. Since I have graduated and left the university, I have not backed up the original PNG data. Therefore, I am providing the data after viewpoint extraction (central 7×7 viewpoints), which is stored in MAT format. You can get the data from
+https://pan.baidu.com/s/1Pza7a2OrH2SwD9E9WizRGw
+password: 44ch
+
 # Requirements
 - Python 3.8.8
 - PyTorch 1.13.1
